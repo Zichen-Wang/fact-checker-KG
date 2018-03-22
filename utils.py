@@ -25,7 +25,7 @@ def SPARQL_request(sparql):
         print('SPARQL_requests_error')
         return False
 
-    print(r.url)
+    #print(r.url)
     variable_name = result_dict['head']['vars'][0]
     results = result_dict['results']['bindings']
 
