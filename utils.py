@@ -1,5 +1,7 @@
 import requests
 
+import nltk
+
 def SPARQL_request(sparql):
 
     keep = {'http://www.w3.org/2001/XMLSchema#integer',
@@ -41,5 +43,36 @@ def SPARQL_request(sparql):
 # WARNING: The character of a newline is '\r\n' not '\n'
 def SPARQL_construction(subjects, predicates):
     pass
+
+def contain_number(sentence):
+    '''
+    input: any arbitratry sentence
+    output: the number if the sentence contains one number that we want, else false
+    entity types, see: https://stackoverflow.com/questions/40480839/nltk-relation-extraction-returns-nothing
+    '''
+
+    tokens = nltk.word_tokenize(sentence)
+    tagged = nltk.pos_tag(tokens)
+
+    namedEnt = nltk.ne_chunk(tagged)
+
+    for item in namedEnt.subtrees():
+        if item.label() == 'DURATION' or item.label() == 'DATE' or item.label() == 'MONEY':
+            return [], False
+
+    for (key, value) in tagged:
+        if value == "CD":          
+            tags = [tag[1] for tag in tagged]
+            return tags, key
+
+    return [], False
+
+if __name__ == '__main__':
+    #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).' 
+    sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
+    sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
+    print(contain_number(sentence))
+
+
 
 
