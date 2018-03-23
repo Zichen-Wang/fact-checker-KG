@@ -1,115 +1,115 @@
 class Text:
-	property:
-		string
+    property:
+        string
 
-		string clean 
+        string clean 
 
-		string title
+        string title
 
 
-	Text(string)
+    Text(string)
 
-	method:
-		preprocessing()
-			1. (), [1]
-		sentence_extractor()
-			return [Sentence1, Sentence2, ...]
+    method:
+        preprocessing()
+            1. (), [1]
+        sentence_extractor()
+            return [Sentence1, Sentence2, ...]
 
 
 
 class Sentence:
-	property:
-		string content
-		int pose_in_text
-		context []
-		string2 
+    property:
+        string content
+        int pose_in_text
+        context []
+        string2 
 
-		list pos_tag[]
+        list pos_tag[]
 
-		string number
+        string number
 
-		Entity subject
+        Entity subject
 
-		Predicate predicate
+        Predicate predicate
 
-	method:
-		get_context([Sentence1, Sentence2...])
-			self.context = [Sentenace_c_1, Sentence_c_2, ...]
+    method:
+        get_context([Sentence1, Sentence2...])
+            self.context = [Sentenace_c_1, Sentence_c_2, ...]
 
-		coreference_resolution()  #neuralCoref
-			self.string2 = 
+        coreference_resolution()  #neuralCoref
+            self.string2 = 
 
-		extract_subject(string title)  # extract subject
-			
-			'''
-			extract all Ns 
-			if (title in Ns -> sim > 0.8)
-				s = title
-			else
-				s = nltk 'nsubj'
-			''' 
-			self.subject
+        extract_subject(string title)  # extract subject
+            
+            '''
+            extract all Ns 
+            if (title in Ns -> sim > 0.8)
+                s = title
+            else
+                s = nltk 'nsubj'
+            ''' 
+            self.subject
 
-		extract_predicate()
-			self.predicate
+        extract_predicate()
+            self.predicate
 
-			'''
-			stanford Open IE -> [triple1, triple2, ...]
-			if (sim(extract出的subject和triple中的subject) > \beta and 该triple中的object带数字)
-				p＝triple中的predicate
-			else
-				- rule 1: (p) of number 
-				- rule 2: number + in + N
-				- rule 3: number + 单位 + adj 
-				- rule 4: 和subject最接近的N
-			'''
+            '''
+            stanford Open IE -> [triple1, triple2, ...]
+            if (sim(extract出的subject和triple中的subject) > \beta and 该triple中的object带数字)
+                p＝triple中的predicate
+            else
+                - rule 1: (p) of number 
+                - rule 2: number + in + N
+                - rule 3: number + 单位 + adj 
+                - rule 4: 和subject最接近的N
+            '''
 
 
 
 class Subject:
 
-	property:
-		string
-		pose
+    property:
+        string
+        pose
 
-		raw_candidate[string1, string1, ...]: wordnet 
-			- top-2 
+        raw_candidate[string1, string1, ...]: wordnet 
+            - top-2 
 
-		candidate_in_kg[(string1, sim1), (string2, sim2), ...]
-			- 2x2 = 4 tuples
+        candidate_in_kg[(string1, sim1), (string2, sim2), ...]
+            - 2x2 = 4 tuples
 
-	method:
-		expand():
-			self.raw_candidate
+    method:
+        expand():
+            self.raw_candidate
 
-		map():
-			self.candidate_in_kg 
-				- map all to DBpedia (semantic based) 
+        map():
+            self.candidate_in_kg 
+                - map all to DBpedia (semantic based) 
 
 
 class Predicate:
-	property:
-		string
-		pose(start, end)
-  		
+    property:
+        string
+        pose(start, end)
+        
 
-		raw_candidate[string1, string2, ...]: wordnet 
-			- top-2
+        raw_candidate[string1, string2, ...]: wordnet 
+            - top-2
 
-		candidate_in_kg[(string1, sim1), (string2, sim2), ...]
-			- 2 * 2=4 tuples
+        candidate_in_kg[(string1, sim1), (string2, sim2), ...]
+            - 2 * 2=4 tuples
 
-	method:
-		expand():
-			self.raw_candidate
-		map():
-			self.candidate_to_kg (string based)
-				- map all to DBpedia 
+    method:
+        expand():
+            self.raw_candidate
+        map():
+            self.candidate_to_kg (string based)
+                - map all to DBpedia 
 
 SPARQL_construction(subjects, predicates):
-	return 16 SPARQL queries
+    return 16 SPARQL queries
 
 
 SPARQL_request(string):
-	return answer
+    return answer
 
