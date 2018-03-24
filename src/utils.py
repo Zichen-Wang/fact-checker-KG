@@ -42,12 +42,39 @@ def SPARQL_request(sparql):
 
 # WARNING: The character of a newline is '\r\n' not '\n'
 def SPARQL_construction(subjects, predicates):
-    pass
+    '''
+    assume that the numbers appear in the object part
+    
+    input:
+    [s1,s1,...]
+    [p1,p2,...]
+    
+    output:
+    [SPARQL1, SPARQL2, SPARQL3,...]
+
+    '''
+    num_sub = len(subjects)
+    num_pred = len(predicates)
+    SPARQL=[]
+    url_s = '<http://dbpedia.org/resource/'
+    url_p = '<http://dbpedia.org/property/' # in few cases, this can be '<http://dbpedia.org/ontology/', need to think about this later
+    for s in subjects:
+        for p in predicates:
+            sparql = "select ?x where {\n"
+            sparql = sparql + url_s + s +"> " + url_p + p + "> ?x .}"
+            print(sparql)
+            SPARQL.append(sparql)
+            
+    return SPARQL
+
+
+
+
 
 def contain_number(sentence):
     '''
     input: any arbitratry sentence
-    output: the number if the sentence contains one number that we want, else false
+    output: the pos_tag along with the number if the sentence contains one number that we want, else false
     entity types, see: https://stackoverflow.com/questions/40480839/nltk-relation-extraction-returns-nothing
     '''
 
@@ -69,10 +96,13 @@ def contain_number(sentence):
 
 if __name__ == '__main__':
     #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).' 
-    sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
-    sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
-    print(contain_number(sentence))
-
+    #sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
+    #sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
+    #print(contain_number(sentence))
+    #s = ['Peking_University']
+    #p = ['established']
+    #SPARQL_construction(s, p)
+    pass
 
 
 
