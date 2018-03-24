@@ -21,8 +21,9 @@ class Sentence:
     property:
         string content
         int pose_in_text
-        context []
-        string2 
+        string context
+
+        string content_resolved
 
         list pos_tag[]
 
@@ -33,8 +34,9 @@ class Sentence:
         Predicate predicate
 
     method:
-        get_context([Sentence1, Sentence2...])
-            self.context = [Sentenace_c_1, Sentence_c_2, ...]
+        get_context()
+            obtain sentence1-snetence_k from text.clean
+            self.context = sentence1 + sentence2 + ... + sentence_k
 
         coreference_resolution()  #neuralCoref
             self.string2 = 
@@ -46,7 +48,7 @@ class Sentence:
             if (title in Ns -> sim > 0.8)
                 s = title
             else
-                s = nltk 'nsubj'
+                s = spacy 'nsubj'
             ''' 
             self.subject
 
@@ -70,7 +72,7 @@ class Subject:
 
     property:
         string
-        pose
+
 
         raw_candidate[string1, string1, ...]: wordnet 
             - top-2 
@@ -90,7 +92,7 @@ class Subject:
 class Predicate:
     property:
         string
-        pose(start, end)
+
         
 
         raw_candidate[string1, string2, ...]: wordnet 
@@ -107,6 +109,7 @@ class Predicate:
                 - map all to DBpedia 
 
 SPARQL_construction(subjects, predicates):
+    '''the input subjects/predicates don't contain any urls, we add urls in this function'''
     return 16 SPARQL queries
 
 
