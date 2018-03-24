@@ -5,6 +5,7 @@ import spacy
 from neuralcoref import Coref
 
 from utils import *
+from subject import Subject
 
 #from predicate import Predicate
 #from text import Text
@@ -73,11 +74,12 @@ class Sentence():
         for (key, value) in tagged:
             if value[0][0] == 'N' and sim_entity(title, key) > alpha: # if it's a N
                 self.subject = title
-                return
+                return Subject(self.subject)
 
         doc = nlp(unicode(self.content_resolved),"utf-8")
 
         self.subject = str([tok for tok in doc if (tok.dep_ == "nsubj")][0])
+        return Subject(self.subject)
         
     def extract_predicate():
         pass

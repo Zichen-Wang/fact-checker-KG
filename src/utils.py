@@ -72,6 +72,7 @@ def SPARQL_construction(subjects, predicates):
 
 
 def contain_number(sentence):
+    
     '''
     input: any arbitratry sentence
     output: the pos_tag along with the number if the sentence contains one number that we want, else false
