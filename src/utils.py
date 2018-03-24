@@ -61,10 +61,10 @@ def SPARQL_construction(subjects, predicates):
     for s in subjects:
         for p in predicates:
             sparql = "select ?x where {\n"
-            sparql = sparql + url_s + s +"> " + url_p + p + "> ?x .}"
+            sparql = sparql + url_s + s.replace(' ','_') +"> " + url_p + p.replace(' ','_') + "> ?x .}"  # attention!  ' ' -> '_'
             print(sparql)
             SPARQL.append(sparql)
-            
+
     return SPARQL
 
 
@@ -93,6 +93,13 @@ def contain_number(sentence):
             return tags, key
 
     return [], False
+
+
+def sim_entity(en1, en2):
+    return 1
+
+def sim_predicate(pred1, pred2):
+    return 1
 
 if __name__ == '__main__':
     #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).' 

@@ -49,3 +49,5 @@ if __name__ == "__main__":
               
         sentence.get_context(text.clean_content)
         sentence.coreference_resolution()
+        sentence.extract_subject(text.title)
+        print("[INFO] the subject of sentence " + sentence.content_resolved + " is: \n" + sentence.subject)
