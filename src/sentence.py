@@ -70,10 +70,10 @@ class Sentence():
         tokens = nltk.word_tokenize(self.content_resolved)
         tagged = nltk.pos_tag(tokens)
 
-        #for (key, value) in tagged:
-        #    if value[0][0] == 'N' and sim_entity(title, key) > alpha: # if it's a N
-        #        self.subject = title
-        #        return
+        for (key, value) in tagged:
+            if value[0][0] == 'N' and sim_entity(title, key) > alpha: # if it's a N
+                self.subject = title
+                return
 
         doc = nlp(unicode(self.content_resolved),"utf-8")
 
