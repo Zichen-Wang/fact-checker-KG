@@ -27,9 +27,9 @@ class Sentence():
         for now, the context is just all sentences appearing beforehead
         '''
         all_sent = nltk.sent_tokenize(clean_text_content)
-        string_context=''
-        for i in all_sent[:self.pos_in_text]:
-            string_context += i
+        string_context = ''.join(all_sent[:self.pos_in_text]
+        #for i in all_sent[:self.pos_in_text]:
+            #string_context += i
         self.context = string_context
 
         # print("[INFO]context for sentence " + self.content + " is: \n" + self.context)
@@ -50,7 +50,7 @@ class Sentence():
         '''
         resolved_utterance_text = coref.get_resolved_utterances()
 
-        self.content_resolved=str(resolved_utterance_text)
+        self.content_resolved = str(resolved_utterance_text)
 
         print("[INFO] the concise sentence we want to query is : " + self.content_resolved)
 
@@ -77,7 +77,7 @@ class Sentence():
                 self.subject = title
                 return Subject(self.subject)
 
-        doc = nlp(unicode(self.content_resolved),"utf-8")
+        doc = nlp(self.content_resolved)
 
         self.subject = str([tok for tok in doc if (tok.dep_ == "nsubj")][0])
         return Subject(self.subject)
