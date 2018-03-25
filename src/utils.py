@@ -1,6 +1,8 @@
 import requests
+from difflib import SequenceMatcher
 
 import nltk
+import spacy
 
 def SPARQL_request(sparql):
 
@@ -93,11 +95,29 @@ def contain_number(sentence):
     return [], False
 
 
-def sim_entity(en1, en2):
-    return 1
+def sim_entity(en1, en2, alpha=0.2):
 
-def sim_predicate(pred1, pred2):
-    return 1
+    '''
+    the similarity measure can be further improved using the context information
+    '''
+
+    nlp = spacy.load('en')
+    semantic_sim = nlp(en1).similarity(nlp(en2))
+    string_sim = SequenceMatcher(None, en1, en2).ratio()
+
+    return alpha * semantic_sim + (1 - alpha) * string_sim
+
+def sim_predicate(pred1, pred2, beta=0.8):
+
+    '''
+    the similarity measure can be further improved using the context information
+    '''
+    
+    nlp = spacy.load('en')
+    semantic_sim = nlp(pred1).similarity(nlp(pred2))
+    string_sim = SequenceMatcher(None, pred1, pred2).ratio()
+
+    return beta * semantic_sim + (1 - beta) * string_sim
 
 if __name__ == '__main__':
     #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).'
@@ -107,7 +127,10 @@ if __name__ == '__main__':
     #s = ['Peking_University']
     #p = ['established']
     #SPARQL_construction(s, p)
-    pass
+    
+    print(sim_entity("1134 Kepler", "Kepler"))
+    print(sim_predicate("establised", "found"))
+    #pass
 
 
 

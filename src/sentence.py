@@ -29,9 +29,7 @@ class Sentence():
 
         all_sent = nltk.sent_tokenize(clean_text_content)
         self.context = ''.join(all_sent[:self.pos_in_text])
-        #for i in all_sent[:self.pos_in_text]:
-            #string_context += i
-        #self.context = string_context
+
 
         # print("[INFO]context for sentence " + self.content + " is: \n" + self.context)
 
@@ -55,7 +53,7 @@ class Sentence():
 
         print("[INFO] the concise sentence we want to query is : " + self.content_resolved)
 
-    def extract_subject(self, title, alpha=0.8):
+    def extract_subject(self, title, alpha=0.65):
 
         '''
         nltk pos_tag list:
