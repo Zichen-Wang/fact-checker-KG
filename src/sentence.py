@@ -26,11 +26,12 @@ class Sentence():
         '''
         for now, the context is just all sentences appearing beforehead
         '''
+
         all_sent = nltk.sent_tokenize(clean_text_content)
-        string_context = ''.join(all_sent[:self.pos_in_text]
+        self.context = ''.join(all_sent[:self.pos_in_text])
         #for i in all_sent[:self.pos_in_text]:
             #string_context += i
-        self.context = string_context
+        #self.context = string_context
 
         # print("[INFO]context for sentence " + self.content + " is: \n" + self.context)
 
