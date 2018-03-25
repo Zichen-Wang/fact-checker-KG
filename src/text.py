@@ -18,12 +18,12 @@ class Text():
     def preprocessing(self):
 
         text = re.sub(r'\([^)]*\)', '', self.raw_content)
-        self.clean_content = filter(lambda x: x in string.printable, text)
+        self.clean_content = ''.join(list(filter(lambda x: x in string.printable, text)))
+        # print(self.clean_content)
 
     def sentence_extractor(self):
 
         sen = []
-
         sent_text = nltk.sent_tokenize(self.clean_content)
         for idx, sent in enumerate(sent_text):
             pos_tag, number = contain_number(sent)

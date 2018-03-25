@@ -40,17 +40,18 @@ class Sentence():
         '''
         output: a string: the resolved content of this sentence
         '''
-        
+
         coref = Coref()
-        clusters = coref.one_shot_coref(utterances = unicode(self.content, "utf-8"), context = unicode(self.context, "utf-8"))
+        # clusters = coref.one_shot_coref(utterances = unicode(self.content, "utf-8"), context = unicode(self.context, "utf-8"))
+        clusters = coref.one_shot_coref(utterances = self.content, context = self.context)
 
         '''
         @ problem here: the resolution result is not accurate enough, especially when the sentences are complicated!
         '''
         resolved_utterance_text = coref.get_resolved_utterances()
-        
+
         self.content_resolved=str(resolved_utterance_text)
-        
+
         print("[INFO] the concise sentence we want to query is : " + self.content_resolved)
 
     def extract_subject(self, title, alpha=0.8):
@@ -58,12 +59,12 @@ class Sentence():
         '''
         nltk pos_tag list:
             https://pythonprogramming.net/natural-language-toolkit-nltk-part-speech-tagging/
-        extract all Ns 
+        extract all Ns
         if (title in Ns -> sim > 0.8)
             s = title
         else
             s = npacy 'nsubj'
-        ''' 
+        '''
 
         nlp = spacy.load('en')
 
@@ -80,7 +81,7 @@ class Sentence():
 
         self.subject = str([tok for tok in doc if (tok.dep_ == "nsubj")][0])
         return Subject(self.subject)
-        
+
     def extract_predicate():
         pass
 
@@ -90,8 +91,8 @@ if __name__ == "__main__":
     '''
     example paragraph:
 
-    Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1,601 days). 
-    Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. 
+    Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1,601 days).
+    Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic.
     The body's observation arc begins at Heidelberg, the night after its official discovery observation.
 
     '''
