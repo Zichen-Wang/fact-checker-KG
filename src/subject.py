@@ -4,5 +4,6 @@ class Subject():
        
     def expand(self):
         pass
+
     def map(self):
         pass
