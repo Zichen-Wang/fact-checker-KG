@@ -44,35 +44,32 @@ def SPARQL_request(sparql):
 def SPARQL_construction(subjects, predicates):
     '''
     assume that the numbers appear in the object part
-    
+
     input:
     [s1,s1,...]
     [p1,p2,...]
-    
+
     output:
     [SPARQL1, SPARQL2, SPARQL3,...]
 
     '''
     num_sub = len(subjects)
     num_pred = len(predicates)
-    SPARQL=[]
+    SPARQLs = []
     url_s = '<http://dbpedia.org/resource/'
     url_p = '<http://dbpedia.org/property/' # in few cases, this can be '<http://dbpedia.org/ontology/', need to think about this later
     for s in subjects:
         for p in predicates:
-            sparql = "select ?x where {\n"
-            sparql = sparql + url_s + s.replace(' ','_') +"> " + url_p + p.replace(' ','_') + "> ?x .}"  # attention!  ' ' -> '_'
+            sparql = "select ?x where {\r\n" # WARNING '\n' -> '\r\n'
+            sparql = sparql + url_s + s.replace(' ' ,'_') + "> " + url_p + p.replace(' ','_') + "> ?x .\r\n}\r\n"  # attention!  ' ' -> '_'
             print(sparql)
-            SPARQL.append(sparql)
+            SPARQLs.append(sparql)
 
-    return SPARQL
-
-
-
+    return SPARQLs
 
 
 def contain_number(sentence):
-    
+
     '''
     input: any arbitratry sentence
     output: the pos_tag along with the number if the sentence contains one number that we want, else false
@@ -89,7 +86,7 @@ def contain_number(sentence):
             return [], False
 
     for (key, value) in tagged:
-        if value == "CD":          
+        if value == "CD":
             tags = [tag[1] for tag in tagged]
             return tags, key
 
@@ -103,7 +100,7 @@ def sim_predicate(pred1, pred2):
     return 1
 
 if __name__ == '__main__':
-    #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).' 
+    #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).'
     #sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
     #sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
     #print(contain_number(sentence))
