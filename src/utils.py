@@ -47,7 +47,7 @@ def SPARQL_construction(subjects, predicates):
     '''
     assume that the numbers appear in the object part
 
-    input:
+    input (with urls):
     [s1,s1,...]
     [p1,p2,...]
 
@@ -58,12 +58,11 @@ def SPARQL_construction(subjects, predicates):
     num_sub = len(subjects)
     num_pred = len(predicates)
     SPARQLs = []
-    url_s = '<http://dbpedia.org/resource/'
-    url_p = '<http://dbpedia.org/property/' # in few cases, this can be '<http://dbpedia.org/ontology/', need to think about this later
+ 
     for s in subjects:
         for p in predicates:
             sparql = "select ?x where {\r\n" # WARNING '\n' -> '\r\n'
-            sparql = sparql + url_s + s.replace(' ' ,'_') + "> " + url_p + p.replace(' ','_') + "> ?x .\r\n}\r\n"  # attention!  ' ' -> '_'
+            sparql = sparql + s.replace(' ' ,'_') + " " + p.replace(' ','_') + " ?x .\r\n}\r\n"  # attention!  ' ' -> '_'
             print(sparql)
             SPARQLs.append(sparql)
 
@@ -120,13 +119,14 @@ def sim_predicate(pred1, pred2, beta=0.8):
     return beta * semantic_sim + (1 - beta) * string_sim
 
 if __name__ == '__main__':
-    #sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).'
-    #sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
-    #sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
-    #print(contain_number(sentence))
-    #s = ['Peking_University']
-    #p = ['established']
-    #SPARQL_construction(s, p)
+
+    # sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).'
+    # sentence = 'Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic. '
+    # sentence = 'Its right bridge consists of piers, with the maximum span of 160 metres (525 ft)'
+    # print(contain_number(sentence))
+    # s = ['Peking_University']
+    # p = ['established']
+    # SPARQL_construction(s, p)
     
     print(sim_entity("1134 Kepler", "Kepler"))
     print(sim_predicate("establised", "found"))
