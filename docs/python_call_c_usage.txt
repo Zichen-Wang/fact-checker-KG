@@ -1,5 +1,5 @@
 compilation command: gcc libsim.c -o libsim.so -fPIC -shared -O3
-WARNING: Above command doesn't check the grammar!
+WARNING: Above command doesn't check the symbol error!
 
 
 python usage:
