@@ -1,3 +1,9 @@
+compilation command: gcc libsim.c -o libsim.so -fPIC -shared -O3
+WARNING: Above command doesn't check the grammar!
+
+
+python usage:
+
 from ctypes import *
 
 sim = cdll.LoadLibrary("c_lib/libsim.so")
