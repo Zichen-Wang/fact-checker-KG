@@ -10,6 +10,7 @@ from neuralcoref import Coref
 
 from utils import *
 from subject import Subject
+from predicate import Predicate
 
 #from predicate import Predicate
 #from text import Text
@@ -107,7 +108,7 @@ class Sentence():
             #if sim_entity(triple[0], self.subject) > alpha and contain_number(triple[2])[1]:
             if sim_entity(triple[0], self.subject) > alpha:
                 self.predicate = triple[1]
-                return
+                return Predicate(self.predicate)
 
         '''
         pattern1 = "of " + self.number
@@ -144,7 +145,7 @@ class Sentence():
         print(candidate_counts.most_common(1)[0])
         self.predicate = candidate_counts.most_common(1)[0][0]
 
-        return
+        return Predicate(self.predicate)
 
 
 

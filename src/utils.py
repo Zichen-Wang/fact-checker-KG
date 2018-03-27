@@ -118,6 +118,18 @@ def sim_predicate(pred1, pred2, beta=0.8):
 
     return beta * semantic_sim + (1 - beta) * string_sim
 
+
+'''
+the two following similarity measurements are used for the mapping process in Subject and Predicate
+'''
+def sim_entities_large(en1, en2):
+    string_sim = SequenceMatcher(None, en1, en2).ratio()
+    return string_sim
+
+def sim_predicates_large(pred1, pred2):
+    string_sim = SequenceMatcher(None, pred1, pred2).ratio()
+    return string_sim
+
 if __name__ == '__main__':
 
     # sentence = 'Kepler orbits the Sun at a distance of 1.4-3.9 AU once every 4 years and 5 months (1601 days).'

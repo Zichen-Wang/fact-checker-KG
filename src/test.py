@@ -49,6 +49,17 @@ if __name__ == "__main__":
               
         sentence.get_context(text.clean_content)
         sentence.coreference_resolution()
-        sentence.extract_subject(text.title)
+        sub = sentence.extract_subject(text.title)
         print("[INFO] the subject of sentence " + sentence.content_resolved + " is: \n" + sentence.subject)
-        sentence.extract_predicate()
+        pred = sentence.extract_predicate()
+
+        
+        sub.expand()
+        print(sub.map())
+
+
+        pred.expand()
+        print(pred.map())
+
+
+
