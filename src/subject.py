@@ -1,3 +1,5 @@
+from ctypes import *
+
 from nltk.corpus import wordnet as wn
 from utils import *
 
@@ -23,7 +25,7 @@ class Subject():
 
         fin = open("../dbpedia/subject.txt", 'r')
         subs = [line.strip()[line.rfind('/') : -1].replace('_', ' ') for line in fin]  # with urls
-
+        '''
         for s in self.raw_mapped:
             #s = s[s.rfind('/'), -1].replace('_', ' ')
             first_max = second_max = 0
@@ -39,6 +41,14 @@ class Subject():
 
             self.candidates.append(subs[first_max])
             self.candidates.append(subs[second_max])
+        '''
+        sim = cdll.LoadLibrary("c_lib/libsim.so")
+        sim.find.argtypes = [c_char_p, c_char_p]
+        sim.find.restypes = c_char_p
+
+        res = sim.find(b"1134 Kepler", b"/home/litian/dbpedia/subject.text")
+        print(res.decode("utf-8"))
         print("subject after mapping is: ", self.candidates)
+
         return self.candidates
 

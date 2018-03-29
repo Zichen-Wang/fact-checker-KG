@@ -2,12 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+double max(double x, double y) {
+    return x > y ? x : y;
+}
 int min(int x, int y) {
     return x < y ? x : y;
-}
-
-int max(int x, int y) {
-    return x > y ? x : y;
 }
 
 double calc_similarity(const char* given, const char* candidate) {
@@ -40,17 +39,12 @@ double calc_similarity(const char* given, const char* candidate) {
     return 1 - 1.0 * ret / max(n, m);
 }
 
-char* find(const char* given, const char* file_path) {  // find top-k max similarities
+double find_max_similarity(const char* given) {
     
-    FILE *fp = fopen(file_path, "r"); 
+    FILE *fp = fopen("/home/litian/dbpedia/subject.text", "r"); 
     char *tmp = (char*)malloc(2000 * sizeof(char));
     int i, j, l;
-    char *ans1 = (char *)malloc(2000 * sizeof(char));
-    char *ans2 = (char *)malloc(2000 * sizeof(char));
-
-    double first_max = 0;
-    double second_max = 0;
-
+    double res = 0;
     while (~fscanf(fp, "%s", tmp)) {
         l = strlen(tmp);
         char *candidate = (char*)malloc((l + 1) * sizeof(char));
@@ -64,38 +58,19 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
                 candidate[j - i - 1] = 0;
                 break;
             }
-        double cur = calc_similarity(given, candidate);
-        if (cur > first_max) {
-            second_max = first_max;
-            first_max = cur;
-            strcpy(ans2, ans1);
-            strcpy(ans1, candidate);
-        }
-        else if (cur > second_max) {
-            second_max = cur;
-            strcpy(ans2, candidate);
-        }
-        //printf("%f %f\n", first_max, second_max);
-        //printf("%s ", ans1);
-        //printf("%s\n", ans2);
+        res = max(res, calc_similarity(given, candidate));
         free(candidate);
     }
-    char* final[2];
     
-    i = 0;
-    for (i = 0; i < 2; i++) {
-        final[i] = (char*) malloc(sizeof(char) * 2000);
-    }
-
-    strcpy(final[0], ans1);
-    strcpy(final[1], ans2);
-
-    printf("%s\n", final[0]);
-    printf("%s\n", final[1]);
-
     free(tmp);
     fclose(fp);
-    return final;
+    return res;
 }
 
+/*
+int main() {
+    printf("%.2lf\n", find_max_similarity("1134 Keplor"));
+    return 0;
+}
+*/
 
