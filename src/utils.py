@@ -121,7 +121,7 @@ def sim_predicate(pred1, pred2, beta=0.8):
 
 '''
 the two following similarity measurements are used for the mapping process in Subject and Predicate
-'''
+
 def sim_entities_large(en1, en2):
     string_sim = SequenceMatcher(None, en1, en2).ratio()
     return string_sim
@@ -129,6 +129,7 @@ def sim_entities_large(en1, en2):
 def sim_predicates_large(pred1, pred2):
     string_sim = SequenceMatcher(None, pred1, pred2).ratio()
     return string_sim
+'''
 
 if __name__ == '__main__':
 

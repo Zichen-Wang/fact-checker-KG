@@ -93,11 +93,9 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
     strcpy(final[0], ans1);
     strcpy(final[1], ans2);
 
-    printf("%s\n", final[0]);
-    printf("%s\n", final[1]);
-
     free(tmp);
     fclose(fp);
+
     return final;
 }
 

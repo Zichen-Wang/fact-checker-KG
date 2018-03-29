@@ -7,15 +7,16 @@ from utils import *
 class Predicate():
     def __init__(self, pred):
         self.raw = pred
-        self.raw_expanded = pred
+        self.raw_expanded = [pred]
         self.candidates = []
     
     def expand(self):
 
         tmp = wn.synsets(self.raw)
         if tmp:
-            self.raw_expanded.append(tmp[0].lemma_names()[0])
-        print("[INFO] predicates after expanding are: ", self.raw_mapped)
+            if tmp[0].lemma_names()[0] not in self.raw_expanded:
+                self.raw_expanded.append(tmp[0].lemma_names()[0])
+        print("[INFO] predicates after expanding are: ", self.raw_expanded)
         return
 
     def map(self):
@@ -25,11 +26,9 @@ class Predicate():
         sim.find.restype = POINTER(c_char_p)
 
         for p in self.raw_expanded:
-            res = sim.find(p, b"/home/litian/dbpedia/subject.text")
-            print(res[0])
-            print(res[1])
-            self.candidates.append(res[0])
-            self.candidates.append(res[1])
+            res = sim.find(p.encode(), b"/home/litian/dbpedia/predicate.text")
+            self.candidates.append(res[0].decode())
+            self.candidates.append(res[1].decode())
         
         '''
         fin = open("../dbpedia/predicate.txt", 'r')
