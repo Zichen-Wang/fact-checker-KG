@@ -1,24 +1,37 @@
+from ctypes import *
+
 from nltk.corpus import wordnet as wn
 from utils import *
 
-from ctypes import *
 
 class Predicate():
     def __init__(self, pred):
         self.raw = pred
-        self.raw_mapped = pred
+        self.raw_expanded = pred
         self.candidates = []
     
     def expand(self):
 
         tmp = wn.synsets(self.raw)
         if tmp:
-            self.raw_mapped.append(tmp[0].lemma_names()[0])
-        print("predicate after expaning is: ", self.raw_mapped)
+            self.raw_expanded.append(tmp[0].lemma_names()[0])
+        print("[INFO] predicates after expanding are: ", self.raw_mapped)
         return
 
     def map(self):
+
+        sim = cdll.LoadLibrary("c_lib/libsim.so")
+        sim.find.argtypes = [c_char_p, c_char_p]
+        sim.find.restype = POINTER(c_char_p)
+
+        for p in self.raw_expanded:
+            res = sim.find(p, b"/home/litian/dbpedia/subject.text")
+            print(res[0])
+            print(res[1])
+            self.candidates.append(res[0])
+            self.candidates.append(res[1])
         
+        '''
         fin = open("../dbpedia/predicate.txt", 'r')
         preds = [line.strip()[line.rfind('/'): -1].replace('_', ' ') for line in fin]
         
@@ -38,5 +51,6 @@ class Predicate():
             self.candidates.append(preds[second_max])
 
         print("predicate after mapping is: ", self.candidates)
+        '''    
         
         return self.candidates

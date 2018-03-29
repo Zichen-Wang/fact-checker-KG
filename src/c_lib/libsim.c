@@ -44,6 +44,7 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
     
     FILE *fp = fopen(file_path, "r"); 
     char *tmp = (char*)malloc(2000 * sizeof(char));
+    //char *tmp_ = (char*)malloc(2000 * sizeof(char));
     int i, j, l;
     char *ans1 = (char *)malloc(2000 * sizeof(char));
     char *ans2 = (char *)malloc(2000 * sizeof(char));
@@ -52,14 +53,19 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
     double second_max = 0;
 
     while (~fscanf(fp, "%s", tmp)) {
+        
         l = strlen(tmp);
+        //for (i = 0; i < l ; i++) {tmp_[i] = tmp[i];}
+        //printf("%s\n", tmp_);
         char *candidate = (char*)malloc((l + 1) * sizeof(char));
         for (i = l - 1; i >= 0; i--)
             if (tmp[i] == '/') {
                 for (j = i + 1; j < l - 1; j++) {
                     if (tmp[j] == '_')
-                        tmp[j] = ' ';
-                    candidate[j - i - 1] = tmp[j];
+                        //tmp[j] = ' ';
+                        candidate[j - i - 1] = ' ';
+                    else 
+                        candidate[j - i - 1] = tmp[j];
                 }
                 candidate[j - i - 1] = 0;
                 break;
@@ -69,15 +75,12 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
             second_max = first_max;
             first_max = cur;
             strcpy(ans2, ans1);
-            strcpy(ans1, candidate);
+            strcpy(ans1, tmp);  // with urls
         }
         else if (cur > second_max) {
             second_max = cur;
-            strcpy(ans2, candidate);
+            strcpy(ans2, tmp); // with urls
         }
-        //printf("%f %f\n", first_max, second_max);
-        //printf("%s ", ans1);
-        //printf("%s\n", ans2);
         free(candidate);
     }
     char* final[2];

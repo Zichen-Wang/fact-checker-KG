@@ -6,15 +6,15 @@ from utils import *
 class Subject():
     def __init__(self, sub):
         self.raw = sub
-        self.raw_mapped = sub
+        self.raw_expanded = sub
         self.candidates = []
        
     def expand(self):
 
         tmp = wn.synsets(self.raw)
         if tmp:
-            self.raw_mapped.append(tmp[0].lemma_names()[0])
-        print("subject after expanding is: ", self.raw_mapped)
+            self.raw_expanded.append(tmp[0].lemma_names()[0])
+        print("subjects after expanding are: ", self.raw_mapped)
         return
 
     def map(self):
@@ -23,8 +23,18 @@ class Subject():
         the sub and pred in the external file is with urls
         '''
 
-        fin = open("../dbpedia/subject.txt", 'r')
-        subs = [line.strip()[line.rfind('/') : -1].replace('_', ' ') for line in fin]  # with urls
+        sim = cdll.LoadLibrary("c_lib/libsim.so")
+        sim.find.argtypes = [c_char_p, c_char_p]
+        sim.find.restype = POINTER(c_char_p)
+
+        for p in self.raw_expanded:
+            res = sim.find(p, b"/home/litian/dbpedia/subject.text")
+            print(res[0])
+            print(res[1])
+            self.candidates.append(res[0])
+            self.candidates.append(res[1])
+
+
         '''
         for s in self.raw_mapped:
             #s = s[s.rfind('/'), -1].replace('_', ' ')
@@ -42,13 +52,6 @@ class Subject():
             self.candidates.append(subs[first_max])
             self.candidates.append(subs[second_max])
         '''
-        sim = cdll.LoadLibrary("c_lib/libsim.so")
-        sim.find.argtypes = [c_char_p, c_char_p]
-        sim.find.restypes = c_char_p
-
-        res = sim.find(b"1134 Kepler", b"/home/litian/dbpedia/subject.text")
-        print(res.decode("utf-8"))
-        print("subject after mapping is: ", self.candidates)
 
         return self.candidates
 
