@@ -11,7 +11,7 @@ from neuralcoref import Coref
 from utils import *
 from subject import Subject
 from predicate import Predicate
-
+from OpenIE.main import stanford_ie
 #from predicate import Predicate
 #from text import Text
 
@@ -100,15 +100,23 @@ class Sentence():
                 extract 3 words with the four rules and then pick up the words which appear more
         '''
 
-        # open IE is slow
-        os.system("echo \"" + self.content_resolved + "\" > tmp")
-        triples = os.popen("python Stanford-OpenIE-Python/main.py -f ../tmp").readlines()[1] 
+        fout = open(os.path.join(os.path.abspath(os.curdir),"tmp.txt"), "w")
+        fout.write(self.content_resolved + "\n")
+        #os.system("echo \"" + self.content_resolved + "\" > tmp")
+        fout.close()
+        #triples = os.popen("python Stanford-OpenIE-Python/main.py -f ../tmp").readlines()[1]
+        triples = stanford_ie(os.path.join(os.path.abspath(os.curdir),"tmp.txt"))
         print("[INFO] triples extracted using Stanford Open IE is: ", triples)
+        print(type(triples))
+        candidate_words=[]
         for triple in triples:
-            #if sim_entity(triple[0], self.subject) > alpha and contain_number(triple[2])[1]:
+            print(triple)
+            print("now cal sim between ", triple[0], self.subject)
             if sim_entity(triple[0], self.subject) > alpha:
-                self.predicate = triple[1]
-                return Predicate(self.predicate)
+                print(triple[1])
+                candidate_words.append(triple[1])
+
+                #return Predicate(self.predicate)
 
         '''
         pattern1 = "of " + self.number
@@ -123,7 +131,7 @@ class Sentence():
         tokens = nltk.word_tokenize(self.content_resolved)
         tagged = nltk.pos_tag(tokens)
         idx_number = [i for i, (key, value) in enumerate(tagged) if value == "CD"][0]
-        #print(idx_number)
+
         candidate_words = []
         try:
             candidate_words.append(tokens[tokens.index(self.number)-2])
@@ -169,4 +177,19 @@ if __name__ == "__main__":
         sentence.get_context()
         sentence.coreference_resolution()
         sentence.extract_predicate()
+
+
+
+ #s = 'Along the River During the Qingming Festival, also known by its Chinese name as the Qingming Shanghe Tu, is a painting by the Song dynasty artist Zhang Zeduan (1085–1145). It captures the daily life of people and the landscape of the capital, Bianjing (present-day Kaifeng) during the Northern Song. The theme is often said to celebrate the festive spirit and worldly commotion at the Qingming Festival, rather than the holidays ceremonial aspects, such as tomb sweeping and prayers. Successive scenes reveal the lifestyle of all levels of the society from rich to poor as well as different economic activities in rural areas and the city, and offer glimpses of period clothing and architecture. The painting is considered to be the most renowned work among all Chinese paintings, and it has been called Chinas Mona Lisa. The scroll is 25.5 centimetres (10.0 inches) in height and 5.25 meters (5.74 yards) long.'
+
+
+
+
+
+
+
+
+
+
+
 

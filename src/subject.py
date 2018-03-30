@@ -13,7 +13,8 @@ class Subject():
 
         tmp = wn.synsets(self.raw)
         if tmp:
-            self.raw_expanded.append(tmp[0].lemma_names()[0])
+            if tmp[0].lemma_names()[0] not in self.raw_expanded:
+                self.raw_expanded.append(tmp[0].lemma_names()[0])
         print("subjects after expanding are: ", self.raw_expanded)
         return
 

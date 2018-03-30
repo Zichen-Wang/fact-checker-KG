@@ -20,8 +20,8 @@ if __name__ == "__main__":
     The body's observation arc begins at Heidelberg, the night after its official discovery observation.
 
     '''
-    s = 'Kepler orbits the Sun once every 4 years and 5 months (1,601 days). Its orbit has an eccentricity of 0.47 with respect to the ecliptic. The body\'s observation arc begins at Heidelberg, the night after its official discovery observation.'
-    text = Text(s, '1134 Kepler')
+    s = 'Peking University (abbreviated PKU or Beida) is a major Chinese research university located in Beijing and a member of the C9 League. Founded as the Imperial University of Peking in 1898 as a replacement of the ancient Guozijian (Imperial College), it is the first modern institution established for higher education in China.'
+    text = Text(s, 'Peking University')
 
     text.preprocessing()
     sentences = text.sentence_extractor()

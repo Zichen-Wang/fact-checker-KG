@@ -99,7 +99,7 @@ def sim_entity(en1, en2, alpha=0.2):
     '''
     the similarity measure can be further improved using the context information
     '''
-
+    # using the neural network to compute the semantic similarity will take a lot of time
     nlp = spacy.load('en')
     semantic_sim = nlp(en1).similarity(nlp(en2))
     string_sim = SequenceMatcher(None, en1, en2).ratio()
