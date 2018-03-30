@@ -1,3 +1,0 @@
-[submodule "src/Stanford-OpenIE-Python"]
-	path = src/Stanford-OpenIE-Python
-	url = https://github.com/philipperemy/Stanford-OpenIE-Python.git
