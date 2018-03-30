@@ -8,7 +8,7 @@ class Subject():
         self.raw = sub
         self.raw_expanded = [sub]
         self.candidates = []
-       
+
     def expand(self):
 
         tmp = wn.synsets(self.raw)
@@ -18,7 +18,7 @@ class Subject():
         return
 
     def map(self):
-        
+
         '''
         the sub and pred in the external file is with urls
 
@@ -33,15 +33,15 @@ class Subject():
         '''
 
         sim = cdll.LoadLibrary("c_lib/libsim.so")
-        sim.find.argtypes = [c_char_p, c_char_p]
+        sim.find.argtypes = [c_char_p, c_char_p, c_int]
         sim.find.restype = POINTER(c_char_p)
 
         for s in self.raw_expanded:
             print("[INFO] start to map ", s)
-            res = sim.find(s.encode(), b"/home/litian/dbpedia/subject.text")
-            res_ = res
+            res = sim.find(s.encode(), b"/home/litian/dbpedia/subject.text", 2)
+            #res_ = res
             tmp1 = res[0].decode()
-            tmp2 = res_[1].decode()
+            tmp2 = res[1].decode()
 
             self.candidates.append(tmp1)
             self.candidates.append(tmp2)

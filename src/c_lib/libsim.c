@@ -2,6 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+struct Node {
+    char* name;
+    double sim;
+};
+    
+
 int min(int x, int y) {
     return x < y ? x : y;
 }
@@ -40,7 +46,7 @@ double calc_similarity(const char* given, const char* candidate) {
     return 1 - 1.0 * ret / max(n, m);
 }
 
-char* find(const char* given, const char* file_path) {  // find top-k max similarities
+char** find(const char* given, const char* file_path, int k) {  // find top-k max similarities
     
     FILE *fp = fopen(file_path, "r"); 
     char *tmp = (char*)malloc(2000 * sizeof(char));
@@ -83,17 +89,20 @@ char* find(const char* given, const char* file_path) {  // find top-k max simila
         }
         free(candidate);
     }
-    char* final[2];
+    char** final = (char **)malloc(sizeof(char *) * k);
     
     i = 0;
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < k; i++) {
         final[i] = (char*) malloc(sizeof(char) * 2000);
     }
 
     strcpy(final[0], ans1);
     strcpy(final[1], ans2);
-
+    
+    free(ans1);
+    free(ans2);
     free(tmp);
+
     fclose(fp);
 
     return final;
