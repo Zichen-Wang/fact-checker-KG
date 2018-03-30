@@ -11,7 +11,7 @@ from neuralcoref import Coref
 from utils import *
 from subject import Subject
 from predicate import Predicate
-from OpenIE.main import stanford_ie
+from IE.main import stanford_ie
 #from predicate import Predicate
 #from text import Text
 
