@@ -1,23 +1,37 @@
-from ctypes import *
+from ctypes import cdll
 
-from nltk.corpus import wordnet as wn
-from utils import *
+from thesaurus import Word
+from Math import sqrt
 
 
 class Predicate():
-    def __init__(self, pred):
+    def __init__(self, pred, confidence=1.0, top_k=2):
         self.raw = pred
-        self.raw_expanded = [pred]
+        self.confidence = confidence
+        self.topk = top_k
+        self.raw_expanded = [(pred, confidence)]
         self.candidates = []
     
     def expand(self):
 
-        tmp = wn.synsets(self.raw)
-        if tmp:
-            if tmp[0].lemma_names()[0] not in self.raw_expanded:
-                self.raw_expanded.append(tmp[0].lemma_names()[0])
+        raw_word = Word(self.raw)
+
+        for relevance in range(1, 4):
+            synsets = raw_word.synonyms('all', relevance=relevance, form='common')
+            for synset in synsets:
+                for word in synset:
+                    self.raw_expanded.append((word, self.confidence * (1.0 - sqrt((4.0 - relevance) * 1600) / 3) / 100));
+
+        for i in range(len(self.raw_expanded)):
+            for j in range(len(self.raw_expanded[i][0])):
+                if (self.raw_expanded[i][0][j] == ' ') and ('a' <= self.raw_expanded[i][0][j + 1] <= 'z'):
+                    self.raw_expanded[i][0][j + 1] = self.raw_expanded[i][0][j + 1] - 'a' + 'A'
+
+                self.raw_expanded[i].replace(" ", "")
+
+
         print("[INFO] predicates after expanding are: ", self.raw_expanded)
-        return
+
 
     def map(self):
 
@@ -26,7 +40,8 @@ class Predicate():
         sim.find.restype = POINTER(c_char_p)
 
         for p in self.raw_expanded:
-            res = sim.find(p.encode(), b"/home/litian/dbpedia/predicate.text")
+            print("[INFO] start to map ", s[0])
+            res = sim.find(p.encode(), b"/home/litian/dbpedia/predicate.text", self.top_k)
             self.candidates.append(res[0].decode())
             self.candidates.append(res[1].decode())
         
@@ -53,3 +68,5 @@ class Predicate():
         '''    
         
         return self.candidates
+
+

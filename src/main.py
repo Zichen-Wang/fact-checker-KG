@@ -1,15 +1,42 @@
 # -*- coding: utf-8 -*-
 
-from ctypes import *
-
-from neuralcoref import Coref
-import nltk
+import os, sys
 
 from text import Text
-from utils import *
+from utils.utils import SPARQL_construction, SPARQL_request
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python main.py [title] [content]")
+        return
+
+    text = Text(sys.argv[0], sys.argv[1])
+    text.preprocessing()
+    sentences = text.sentence_extractor()
+
+    for sentence in sentences:
+              
+        sentence.get_context(text.clean_content)
+        sentence.coreference_resolution()
+        
+        sentence.extract_subject(text.title)
+        print("[INFO] the subject of sentence " + sentence.content_resolved + " is: \n" + sentence.subject)
+        print("[INFO] candidate subjects are: ", sentence.subject)
+        
+        sentence.extract_predicate()
+        print("[INFO] candidate predicates are: ", sentence.predicate)
+        
+
+        sparqls = SPARQL_construction(sentence.subject, sentence.predicate)
+        for sparql in sparqls:
+            print(" [INFO] the sparql is: ", sparql)
+            print(" [INFO] the results of above sparql are: ", SPARQL_request(sparql))
+            print()
 
 
 if __name__ == "__main__":
+    main()
 
 # first, get one example to run smooothly
     '''
@@ -20,34 +47,10 @@ if __name__ == "__main__":
     The body's observation arc begins at Heidelberg, the night after its official discovery observation.
 
     '''
-    s = 'Peking University (abbreviated PKU or Beida) is a major Chinese research university located in Beijing and a member of the C9 League. Founded as the Imperial University of Peking in 1898 as a replacement of the ancient Guozijian (Imperial College), it is the first modern institution established for higher education in China.'
-    text = Text(s, 'Peking University')
 
-    text.preprocessing()
-    sentences = text.sentence_extractor()
+    #s = 'Peking University (abbreviated PKU or Beida) is a major Chinese research university located in Beijing and a member of the C9 League. Founded as the Imperial University of Peking in 1898 as a replacement of the ancient Guozijian (Imperial College), it is the first modern institution established for higher education in China.'
 
-    for sentence in sentences:
-              
-        sentence.get_context(text.clean_content)
-        sentence.coreference_resolution()
-        sub = sentence.extract_subject(text.title)
-        print("[INFO] the subject of sentence " + sentence.content_resolved + " is: \n" + sentence.subject)
-        pred = sentence.extract_predicate()
-        
-        sub.expand()
-        sub_mapped = sub.map()
-        print("[INFO] candidate subjects are: ", sub_mapped)
-
-
-        pred.expand()
-        pred_mapped = pred.map()
-        print("[INFO] candidate predicates are: ", pred_mapped)
-        
-
-        sparqls = SPARQL_construction(sub_mapped, pred_mapped)
-        for sparql in sparqls:
-            print(" [INFO] the sparql is: ", sparql)
-            print(' ')
+    
 
 
 

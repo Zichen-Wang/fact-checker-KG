@@ -8,7 +8,7 @@ import spacy
 
 from neuralcoref import Coref
 
-from utils import *
+from utils.utils import *
 from subject import Subject
 from predicate import Predicate
 from IE.main import stanford_ie
@@ -23,8 +23,9 @@ class Sentence():
         self.number = number
         self.context = []
         self.content_resolved = None
-        self.subject = None  # the raw subject in the sentence
-        self.predicate = None # the raw predicate verb/phrase in the sentence
+
+        self.subject = []  # the raw subject in the sentence
+        self.predicate = [] # the raw predicate verb/phrase in the sentence
 
     def get_context(self, clean_text_content):
 
@@ -83,10 +84,14 @@ class Sentence():
 
         doc = nlp(self.content_resolved)
 
-        self.subject = str([tok for tok in doc if (tok.dep_ == "nsubj")][0])
-        return Subject(self.subject)
+        subject = Subject(str([tok for tok in doc if (tok.dep_ == "nsubj")][0]))
 
-    def extract_predicate(self, alpha=0.9):
+        subject.expand()
+        subject.map()
+
+        self.subject = subject.candidates
+
+    def extract_predicate(self, max_gram_num=2):
 
         '''
         stanford Open IE -> [triple1, triple2, ...]
@@ -100,6 +105,7 @@ class Sentence():
                 extract 3 words with the four rules and then pick up the words which appear more
         '''
 
+        '''
         fout = open(os.path.join(os.path.abspath(os.curdir),"tmp.txt"), "w")
         fout.write(self.content_resolved + "\n")
         #os.system("echo \"" + self.content_resolved + "\" > tmp")
@@ -119,6 +125,8 @@ class Sentence():
                 #return Predicate(self.predicate)
 
         '''
+
+        '''
         pattern1 = "of " + self.number
         pattern2 = self.number + 一个单词 + "in "
         pattern3 = self.number + 一个单词 + adj.
@@ -128,6 +136,7 @@ class Sentence():
             print(pattern1.group(1))
         '''
 
+        '''
         tokens = nltk.word_tokenize(self.content_resolved)
         tagged = nltk.pos_tag(tokens)
         idx_number = [i for i, (key, value) in enumerate(tagged) if value == "CD"][0]
@@ -152,8 +161,31 @@ class Sentence():
         candidate_counts = Counter(candidate_words)
         print(candidate_counts.most_common(1)[0])
         self.predicate = candidate_counts.most_common(1)[0][0]
+        '''
 
-        return Predicate(self.predicate)
+        predicates = []
+        sentence = self.content_resolved
+        
+        for gram_num in range(max_gram_num):
+            ngrams = nltk.ngrams(sentence.split(), gram_num)
+            for ngram in ngrams:
+                predicates.append(Predicate(pred=' '.join(ngram)))
+
+        all_predicates_candidates = []
+        for A_predicate in predicates:
+            A_predicate.expand()
+            A_predicate.map()
+            for c in A_predicate.candidates:
+                all_predicates_candidates.append(c)
+
+
+        return all_predicates_candidates
+
+
+
+
+
+        #return Predicate(self.predicate)
 
 
 
@@ -168,7 +200,7 @@ if __name__ == "__main__":
 
     '''
 
-    s = 'Kepler orbits the Sun once every 4 years and 5 months (1,601 days). Its orbit has an eccentricity of 0.47 and an inclination of 15° with respect to the ecliptic. The body\'s observation arc begins at Heidelberg, the night after its official discovery observation.'
+    s = 'Kepler orbits the Sun once every 4 years and 5 months. Its orbit has an eccentricity of 0.47 and an inclination of 15 with respect to the ecliptic.'
     text = Text(s, '1134 Kepler')
 
     sentences = text.sentence_extractor()
@@ -177,19 +209,4 @@ if __name__ == "__main__":
         sentence.get_context()
         sentence.coreference_resolution()
         sentence.extract_predicate()
-
-
-
- #s = 'Along the River During the Qingming Festival, also known by its Chinese name as the Qingming Shanghe Tu, is a painting by the Song dynasty artist Zhang Zeduan (1085–1145). It captures the daily life of people and the landscape of the capital, Bianjing (present-day Kaifeng) during the Northern Song. The theme is often said to celebrate the festive spirit and worldly commotion at the Qingming Festival, rather than the holidays ceremonial aspects, such as tomb sweeping and prayers. Successive scenes reveal the lifestyle of all levels of the society from rich to poor as well as different economic activities in rural areas and the city, and offer glimpses of period clothing and architecture. The painting is considered to be the most renowned work among all Chinese paintings, and it has been called Chinas Mona Lisa. The scroll is 25.5 centimetres (10.0 inches) in height and 5.25 meters (5.74 yards) long.'
-
-
-
-
-
-
-
-
-
-
-
 

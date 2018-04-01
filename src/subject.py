@@ -1,22 +1,29 @@
-from ctypes import *
+from ctypes import cdll
 
 from nltk.corpus import wordnet as wn
-from utils import *
+from utils.utils import *
 
 class Subject():
-    def __init__(self, sub):
+    def __init__(self, sub, top_k=2):
         self.raw = sub
+        self.top_k = top_k
         self.raw_expanded = [sub]
         self.candidates = []
 
     def expand(self):
 
-        tmp = wn.synsets(self.raw)
-        if tmp:
-            if tmp[0].lemma_names()[0] not in self.raw_expanded:
-                self.raw_expanded.append(tmp[0].lemma_names()[0])
+        raw_word = Word(self.raw)
+
+        for relevance in range(1, 4):
+            synsets = raw_word.synonyms('all', relevance=relevance, form='common')
+            for synset in synsets:
+                for word in synset:
+                    self.raw_expanded.append((word, (1.0 - sqrt((4.0 - relevance) * 1600) / 3) / 100));
+
+        for i in range(len(self.raw_expanded)):
+            self.raw_expanded[i][0].replace(" ", "_")
+
         print("subjects after expanding are: ", self.raw_expanded)
-        return
 
     def map(self):
 
@@ -38,8 +45,8 @@ class Subject():
         sim.find.restype = POINTER(c_char_p)
 
         for s in self.raw_expanded:
-            print("[INFO] start to map ", s)
-            res = sim.find(s.encode(), b"/home/litian/dbpedia/subject.text", 2)
+            print("[INFO] start to map ", s[0])
+            res = sim.find(s[0].encode(), b"/home/litian/dbpedia/subject.text", self.top_k)
             #res_ = res
             tmp1 = res[0].decode()
             tmp2 = res[1].decode()
@@ -64,6 +71,4 @@ class Subject():
             self.candidates.append(subs[first_max])
             self.candidates.append(subs[second_max])
         '''
-
-        return self.candidates
 

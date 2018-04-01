@@ -6,14 +6,14 @@ import string
 import nltk
 
 from sentence import Sentence
-from utils import *
+from utils import contain_number
 
 class Text():
 
-    def __init__(self, content, title):
-        self.raw_content = content
+    def __init__(self, title, content):
         self.title = title
-        self.clean_content=None
+        self.raw_content = content
+        self.clean_content = None
 
     def preprocessing(self):
 
