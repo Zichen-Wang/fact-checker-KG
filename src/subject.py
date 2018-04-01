@@ -1,7 +1,7 @@
-from ctypes import cdll
+from ctypes import *
 
-from nltk.corpus import wordnet as wn
-from utils.utils import *
+from utils.thesaurus import Word
+from math import sqrt
 
 class Subject():
     def __init__(self, sub, top_k=2):
@@ -46,7 +46,7 @@ class Subject():
 
         for s in self.raw_expanded:
             print("[INFO] start to map ", s[0])
-            res = sim.find(s[0].encode(), b"/home/litian/dbpedia/subject.text", self.top_k)
+            res = sim.find(s[0].encode(), b"/home/litian/dbpedia/subject.txt", self.top_k)
             #res_ = res
             tmp1 = res[0].decode()
             tmp2 = res[1].decode()

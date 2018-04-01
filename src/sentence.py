@@ -79,8 +79,8 @@ class Sentence():
 
         for (key, value) in tagged:
             if value[0] == 'N' and sim_entity(title, key) > alpha: # if it's a N
-                self.subject = title
-                return Subject(self.subject)
+                self.subject = ["<http://dbpedia.org/resource/" + title + ">"]
+                return
 
         doc = nlp(self.content_resolved)
 
@@ -165,11 +165,14 @@ class Sentence():
 
         predicates = []
         sentence = self.content_resolved
-        
-        for gram_num in range(max_gram_num):
+
+        for gram_num in range(max_gram_numi + 1):
             ngrams = nltk.ngrams(sentence.split(), gram_num)
             for ngram in ngrams:
-                predicates.append(Predicate(pred=' '.join(ngram)))
+                pred = ' '.join(ngram)
+                pred.replace(",", "")
+                pred.replace(".", "")
+                predicates.append(Predicate(pred=pred))
 
         all_predicates_candidates = []
         for A_predicate in predicates:
@@ -179,8 +182,7 @@ class Sentence():
                 all_predicates_candidates.append(c)
 
 
-        return all_predicates_candidates
-
+        self.predicate = all_predicates_candidates
 
 
 

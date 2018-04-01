@@ -6,7 +6,7 @@ import string
 import nltk
 
 from sentence import Sentence
-from utils import contain_number
+from utils.utils import contain_number
 
 class Text():
 
