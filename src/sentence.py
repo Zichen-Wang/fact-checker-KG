@@ -166,7 +166,7 @@ class Sentence():
         predicates = []
         sentence = self.content_resolved
 
-        for gram_num in range(max_gram_numi + 1):
+        for gram_num in range(max_gram_num + 1):
             ngrams = nltk.ngrams(sentence.split(), gram_num)
             for ngram in ngrams:
                 pred = ' '.join(ngram)
