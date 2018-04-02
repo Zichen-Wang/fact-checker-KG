@@ -1,12 +1,24 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+#define MAX_LINE 3500000
+#define MAX_LEN 2000
+#define MAX_THREAD 10
+#define MAX_K 10
+
+
+struct Input {
+    char *given, **begin, **end;
+    int top_k;
+};
+
 struct Node {
-    char* name;
+    char *str;
     double sim;
 };
-    
+
 
 int min(int x, int y) {
     return x < y ? x : y;
@@ -46,65 +58,102 @@ double calc_similarity(const char* given, const char* candidate) {
     return 1 - 1.0 * ret / max(n, m);
 }
 
-char** find(const char* given, const char* file_path, int k) {  // find top-k max similarities
-    
-    FILE *fp = fopen(file_path, "r"); 
-    char *tmp = (char*)malloc(2000 * sizeof(char));
-    //char *tmp_ = (char*)malloc(2000 * sizeof(char));
-    int i, j, l;
-    char *ans1 = (char *)malloc(2000 * sizeof(char));
-    char *ans2 = (char *)malloc(2000 * sizeof(char));
+void* work(void *ptr) {
+    struct Input *data = (struct Input *)ptr;
+    int i, j;
 
-    double first_max = 0;
-    double second_max = 0;
 
-    while (~fscanf(fp, "%s", tmp)) {
-        
+    char *tmp = (char*)malloc(MAX_LEN * sizeof(char));
+    int l;
+
+
+    struct Node *res = (struct Node *)malloc((data -> top_k) * sizeof(char *));
+    for (i = 0; i < data -> top_k; i++) {
+        res[i].str = (char *)malloc(MAX_LEN * sizeof(char));
+        res[i].sim = 0;
+    }
+
+    char **candidate;
+    for (candidate = data -> begin; *candidate && candidate != data -> end; candidate++) {
+
+        strcpy(tmp, *candidate);
         l = strlen(tmp);
-        //for (i = 0; i < l ; i++) {tmp_[i] = tmp[i];}
-        //printf("%s\n", tmp_);
-        char *candidate = (char*)malloc((l + 1) * sizeof(char));
+
         for (i = l - 1; i >= 0; i--)
-            if (tmp[i] == '/') {
+            if ((*candidate)[i] == '/') {
                 for (j = i + 1; j < l - 1; j++) {
-                    if (tmp[j] == '_')
-                        //tmp[j] = ' ';
-                        candidate[j - i - 1] = ' ';
+                    if ((*candidate)[j] == '_')
+                        tmp[j - i - 1] = ' ';
                     else 
-                        candidate[j - i - 1] = tmp[j];
+                        tmp[j - i - 1] = (*candidate)[j];
                 }
-                candidate[j - i - 1] = 0;
+                tmp[j - i - 1] = 0;
                 break;
             }
-        double cur = calc_similarity(given, candidate);
-        if (cur > first_max) {
-            second_max = first_max;
-            first_max = cur;
-            strcpy(ans2, ans1);
-            strcpy(ans1, tmp);  // with urls
-        }
-        else if (cur > second_max) {
-            second_max = cur;
-            strcpy(ans2, tmp); // with urls
-        }
-        free(candidate);
-    }
-    char** final = (char **)malloc(sizeof(char *) * k);
-    
-    i = 0;
-    for (i = 0; i < k; i++) {
-        final[i] = (char*) malloc(sizeof(char) * 2000);
-    }
 
-    strcpy(final[0], ans1);
-    strcpy(final[1], ans2);
-    
-    free(ans1);
-    free(ans2);
+        double cur_sim = calc_similarity(data -> given, tmp);
+        if (cur_sim > res[0].sim) {
+            strcpy(res[1].str, res[0].str);
+            res[1].sim = res[0].sim;
+
+            strcpy(res[0].str, *candidate);
+            res[0].sim = cur_sim;
+        }
+        else if (cur_sim > res[1].sim) {
+            strcpy(res[1].str, *candidate); // with urls
+            res[1].sim = cur_sim;
+        }
+    }
+    pthread_exit((void *)res);
+}
+
+char** find(const char* given, const char* file_path, int top_k) {
+
+    int i;
+    char **all_text = (char **)malloc(MAX_LINE * sizeof(char *));
+    int tot = 0;
+
+    FILE *fp = fopen(file_path, "r"); 
+    char *tmp = (char*)malloc(MAX_LEN * sizeof(char));
+    int l;
+
+    while (~fscanf(fp, "%s", tmp)) {
+        l = strlen(tmp);
+        all_text[tot] = (char*)malloc((l + 1) * sizeof(char));
+        strcpy(all_text[tot], tmp);
+        tot++;
+    }
     free(tmp);
 
-    fclose(fp);
+    all_text[tot] = NULL;
+    int per_thread_num = tot / MAX_THREAD + (int)(tot % MAX_THREAD != 0);
+    
+    pthread_t thread[MAX_THREAD];
 
-    return final;
+    struct Input arg[MAX_THREAD];
+    void *retVal[MAX_THREAD];
+
+    for (i = 0; i < MAX_THREAD; i++) {
+        arg[i].given = (char *)given;
+        arg[i].begin = all_text + per_thread_num * i;
+        arg[i].end = all_text + per_thread_num * (i + 1);
+
+        arg[i].top_k = top_k;
+        pthread_create(thread + i, NULL, (void *)&work, (void *)(arg + i));
+    }
+
+    for (i = 0; i < MAX_THREAD; i++) {
+        pthread_join(thread[i], retVal + i);
+        struct Node *res = (struct Node *)(retVal[i]);
+        printf("%s %lf\n", res[0].str, res[0].sim);
+        printf("%s %lf\n", res[1].str, res[1].sim);
+    }
+    
+}
+
+int main() {
+    char *s = "1134 Kepler";
+    char **res = find(s, "/home/litian/dbpedia/subject.txt", 2);
+    return 0;
 }
 
